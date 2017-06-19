@@ -1,18 +1,58 @@
 'use strict';
 
-function render(root) {
-	root.empty();
-	var wrapper = $('<div>',{
-		class: 'wrapper'
+function getPlanetList(url) {
+	$.get(url,function (response) {
+		response.results.forEach(function (planet) {
+			$.get(planet,function (planetDetails) {
+				console.log(planetDetails);
+			})
+		})
+	})
+}
+/*
+Utilizando Promises
+ */
+function getJSON(url) {
+	return new Promise(function (resolve,reject) {
+		$.get(url, function (response) {
+			resolve(response);
+		});
 	});
-	wrapper
-		.append(Header())
-		.append(Section());
-
-	root.append(wrapper);
 }
 
-$(function() {
-	var root = $('#root');
-	render(root);
+getJSON('data/earth-like-results.json').then(function (response) {
+	var promises = response.results.map(function (planetURL) {
+		return getJSON(planetURL);
+	});
+	Promise.all(promises).then(function (values) {
+		console.log(values);
+	});
 });
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
